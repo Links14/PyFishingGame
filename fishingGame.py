@@ -34,6 +34,7 @@ low     = (catchRange[0]-meterRange[0])/2 + yoffset #50
 high    = (catchRange[1]+meterRange[1])/2 + yoffset #275
 midlow  = catchRange[0] + yoffset
 midhigh = catchRange[1] + yoffset
+average = (midhigh+midlow)/2
 middle = (meterRange[1]-meterRange[0])/2
 
 catchMeter = (midhigh+midlow)/2-yoffset
@@ -92,11 +93,11 @@ while(True):
         
         if moving:
             if up:
-                orange_r = orange_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
-                green_r = green_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
+                orange_r = orange_s.get_rect(center = (xoffset, average))
+                green_r = green_s.get_rect(center = (xoffset, average))
             else:
-                orange_r = orange_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
-                green_r = green_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
+                orange_r = orange_s.get_rect(center = (xoffset, average))
+                green_r = green_s.get_rect(center = (xoffset, average))
             
             
         
