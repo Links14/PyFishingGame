@@ -18,10 +18,13 @@ clock = pygame.time.Clock()                                 # Create a variable 
           
 # ==========================================================================
 
-gameOver= False
+gameOver = False
+moving = False
+up = True
 catchRange = (160, 180)
 meterRange = (0, 300)
 meterDimensions = (30, 300)
+movingRange = (meterDimensions[1]-catchRange[0], meterDimensions[1]-catchRange[1])
 mouseButtonDown = False
 xoffset = 600
 yoffset = abs(display[1]/2 - meterDimensions[1]/2)
@@ -44,7 +47,7 @@ pull_bg = pygame.image.load("FishingGame-BG-pull.png").convert()
 fish_bg = pygame.image.load("FishingGame-BG-fish.png").convert()
 
 
-test_font = pygame.font.Font("PixelType.ttf", 50)                  # defines font using Font(type, size)
+test_font = pygame.font.Font("PixelType.ttf", 100)                  # defines font using Font(type, size)
 wintext_s = test_font.render("YOU WIN!", False, "Black")
 losetext_s = test_font.render("You Lose", False, "Black")
 
@@ -61,9 +64,8 @@ orange_s.fill("Orange")
 orange_r = orange_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
 
 green_s = pygame.Surface((meterDimensions[0], midhigh - midlow))
-green_s.fill("Green")           
+green_s.fill("Green")
 green_r = green_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
-
 
 lineDisplay_s = pygame.Surface((200, 5))
 lineDisplay_s.fill("White")           
@@ -83,16 +85,29 @@ while(True):
             mouseButtonDown = False
       
 # ==========================================================================
+
     if not gameOver:
         if mouseButtonDown: screen.blit(pull_bg, (0, 0))
         else:               screen.blit(idle_bg, (0, 0))
+        
+        if moving:
+            if up:
+                orange_r = orange_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
+                green_r = green_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
+            else:
+                orange_r = orange_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
+                green_r = green_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
+            
+            
+        
+        
+        lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
     
         screen.blit(black_s, black_r)
         screen.blit(red_s, red_r)
         screen.blit(orange_s, orange_r)
         screen.blit(green_s, green_r)
         
-        lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
         screen.blit(lineDisplay_s, lineDisplay_r)
     
 # ==========================================================================
@@ -105,30 +120,17 @@ while(True):
                 catchMeter -= 1.5
                 
         if lineDisplay_r.colliderect(green_r):
-            print("green")
+            #print("green")
             catchFactor += 1
         elif lineDisplay_r.colliderect(orange_r):
-            print("orange")
+            #print("orange")
             catchFactor -= 1
         elif lineDisplay_r.colliderect(red_r):
-            print("red")
+            #print("red")
             catchFactor -= 3
         else:
             RuntimeError("LineDisplay is misplaced")
-                
-    
-    
-    # if catchMeter+yoffset <=  low or catchMeter+yoffset >= high:            # compare the meter to the lowest and highest thresholds, if it is past these
-    #     if catchFactor > 0:# catchFactor -= 3
-    #         print("red")
-    # elif catchMeter+yoffset >= midlow and catchMeter+yoffset <= midhigh:    # compare the meter to the catch thresholds, add to caught value if inside
-    #     if catchFactor < caughtThreshold:# catchFactor += 1
-    #         print("green")
-    # else:                                                   # if not in the catch range but neither in the critical range, subtract only 1
-    #     if catchFactor > 0:# catchFactor -= 1
-    #         print("orange")
-    
-    print(catchFactor)
+
     
     if catchFactor >= caughtThreshold:
         gameOver = True
