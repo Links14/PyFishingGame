@@ -10,16 +10,16 @@ from sys import exit
 # _s means surface
 # _r means rectangle
 
-
 display = (800, 600)
 pygame.init()                                               # Initializes the game
 screen = pygame.display.set_mode(display)                   # Creates a display window which is assigned to variable screen
-pygame.display.set_caption("Fishing!")                   # Set the window title to the given string
+pygame.display.set_caption("FishingGame Demo")                   # Set the window title to the given string
 clock = pygame.time.Clock()                                 # Create a variable clock to keep track of game time
           
 # ==========================================================================
 
-catchRange = (180, 200)
+gameOver= False
+catchRange = (160, 180)
 meterRange = (0, 300)
 meterDimensions = (30, 300)
 mouseButtonDown = False
@@ -56,7 +56,7 @@ red_s = pygame.Surface((meterDimensions[0], meterDimensions[1]))
 red_s.fill("Red")
 red_r = red_s.get_rect(center = (xoffset, display[1]/2))
 
-orange_s = pygame.Surface((meterDimensions[0], (midhigh - midlow)*3))
+orange_s = pygame.Surface((meterDimensions[0], (midhigh - midlow)+50))
 orange_s.fill("Orange")         
 orange_r = orange_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
 
@@ -81,40 +81,41 @@ while(True):
             
         if event.type == pygame.MOUSEBUTTONUP:
             mouseButtonDown = False
-            
+      
 # ==========================================================================
-    if mouseButtonDown: screen.blit(pull_bg, (0, 0))
-    else:               screen.blit(idle_bg, (0, 0))
-
-    screen.blit(black_s, black_r)
-    screen.blit(red_s, red_r)
-    screen.blit(orange_s, orange_r)
-    screen.blit(green_s, green_r)
+    if not gameOver:
+        if mouseButtonDown: screen.blit(pull_bg, (0, 0))
+        else:               screen.blit(idle_bg, (0, 0))
     
-    lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
-    screen.blit(lineDisplay_s, lineDisplay_r)
+        screen.blit(black_s, black_r)
+        screen.blit(red_s, red_r)
+        screen.blit(orange_s, orange_r)
+        screen.blit(green_s, green_r)
+        
+        lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
+        screen.blit(lineDisplay_s, lineDisplay_r)
     
 # ==========================================================================
 
-    if not catchMeter+yoffset >= meterRange[1]+yoffset:
-        if mouseButtonDown:
-            catchMeter += 1.5
-    if not catchMeter+yoffset <= meterRange[0]+yoffset:
-        if not mouseButtonDown:
-            catchMeter -= 1.5
-            
-    if lineDisplay_r.colliderect(green_r):
-        print("green")
-        catchFactor += 1
-    elif lineDisplay_r.colliderect(orange_r):
-        print("orange")
-        catchFactor -= 1
-    elif lineDisplay_r.colliderect(red_r):
-        print("red")
-        catchFactor -= 3
-    else:
-        RuntimeError("LineDisplay is misplaced")
-            
+        if not catchMeter+yoffset >= meterRange[1]+yoffset:
+            if mouseButtonDown:
+                catchMeter += 1.5
+        if not catchMeter+yoffset <= meterRange[0]+yoffset:
+            if not mouseButtonDown:
+                catchMeter -= 1.5
+                
+        if lineDisplay_r.colliderect(green_r):
+            print("green")
+            catchFactor += 1
+        elif lineDisplay_r.colliderect(orange_r):
+            print("orange")
+            catchFactor -= 1
+        elif lineDisplay_r.colliderect(red_r):
+            print("red")
+            catchFactor -= 3
+        else:
+            RuntimeError("LineDisplay is misplaced")
+                
     
     
     # if catchMeter+yoffset <=  low or catchMeter+yoffset >= high:            # compare the meter to the lowest and highest thresholds, if it is past these
@@ -130,11 +131,13 @@ while(True):
     print(catchFactor)
     
     if catchFactor >= caughtThreshold:
+        gameOver = True
         print("YOU WIN")
         screen.blit(fish_bg, (0, 0))
         screen.blit(wintext_s, (display[0]/2, display[1]/4))
     
     if catchFactor <= 0:
+        gameOver = True
         print("YOU LOSE")
         screen.blit(losetext_s, (display[0]/2, display[1]/4))
         pygame.quit()
