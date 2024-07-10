@@ -37,7 +37,7 @@ midhigh = catchRange[1] + yoffset
 average = (midhigh+midlow)/2
 middle = (meterRange[1]-meterRange[0])/2
 
-catchMeter = (midhigh+midlow)/2-yoffset
+catchMeter = (catchRange[0]+catchRange[1])/2
 caughtThreshold = 1000
 catchFactor = caughtThreshold/4
 
@@ -70,6 +70,7 @@ green_r = green_s.get_rect(center = (xoffset, (midhigh+midlow)/2))
 
 lineDisplay_s = pygame.Surface((200, 5))
 lineDisplay_s.fill("White")           
+lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
 
 # ==========================================================================
 
@@ -99,18 +100,16 @@ while(True):
             else:  average += 1
         
         if average >= display[1]/2 + yoffset - 50:   up = True
-        elif average <= display[1]/2 - yoffset + 50: up = False 
-                
-                
-        orange_r = orange_s.get_rect(center = (xoffset, average))
-        green_r = green_s.get_rect(center = (xoffset, average))
-        lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
+        elif average <= display[1]/2 - yoffset + 50: up = False
+        
+        orange_r.y      = average - 25
+        green_r.y       = average
+        lineDisplay_r.y = catchMeter+yoffset
     
         screen.blit(black_s, black_r)
         screen.blit(red_s, red_r)
         screen.blit(orange_s, orange_r)
         screen.blit(green_s, green_r)
-        
         screen.blit(lineDisplay_s, lineDisplay_r)
     
 # ==========================================================================
