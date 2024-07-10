@@ -38,8 +38,8 @@ average = (midhigh+midlow)/2
 middle = (meterRange[1]-meterRange[0])/2
 
 catchMeter = (midhigh+midlow)/2-yoffset
-caughtThreshold = 300
-catchFactor = caughtThreshold/2
+caughtThreshold = 1000
+catchFactor = caughtThreshold/4
 
 # ==========================================================================
 
@@ -91,17 +91,19 @@ while(True):
         if mouseButtonDown: screen.blit(pull_bg, (0, 0))
         else:               screen.blit(idle_bg, (0, 0))
         
+        if catchFactor >= caughtThreshold/2:
+            moving = True
+        
         if moving:
-            if up:
-                orange_r = orange_s.get_rect(center = (xoffset, average))
-                green_r = green_s.get_rect(center = (xoffset, average))
-            else:
-                orange_r = orange_s.get_rect(center = (xoffset, average))
-                green_r = green_s.get_rect(center = (xoffset, average))
-            
-            
+            if up: average -= 1
+            else:  average += 1
         
-        
+        if average >= display[1]/2 + yoffset - 50:   up = True
+        elif average <= display[1]/2 - yoffset + 50: up = False 
+                
+                
+        orange_r = orange_s.get_rect(center = (xoffset, average))
+        green_r = green_s.get_rect(center = (xoffset, average))
         lineDisplay_r = lineDisplay_s.get_rect(center = (xoffset, catchMeter+yoffset))
     
         screen.blit(black_s, black_r)
@@ -113,10 +115,10 @@ while(True):
     
 # ==========================================================================
 
-        if not catchMeter+yoffset >= meterRange[1]+yoffset:
+        if not catchMeter >= meterRange[1]:
             if mouseButtonDown:
                 catchMeter += 1.5
-        if not catchMeter+yoffset <= meterRange[0]+yoffset:
+        if not catchMeter <= meterRange[0]:
             if not mouseButtonDown:
                 catchMeter -= 1.5
                 
@@ -135,13 +137,11 @@ while(True):
     
     if catchFactor >= caughtThreshold:
         gameOver = True
-        print("YOU WIN")
         screen.blit(fish_bg, (0, 0))
         screen.blit(wintext_s, (display[0]/2, display[1]/4))
     
     if catchFactor <= 0:
         gameOver = True
-        print("YOU LOSE")
         screen.blit(losetext_s, (display[0]/2, display[1]/4))
         pygame.quit()
         exit()
