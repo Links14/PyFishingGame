@@ -18,7 +18,7 @@ clock = pygame.time.Clock()                                 # Create a variable 
           
 # ==========================================================================
 
-gameOver = False
+gameOver = True
 moving = False
 up = True
 catchRange = (160, 180)
@@ -52,6 +52,14 @@ test_font = pygame.font.Font("PixelType.ttf", 100)                  # defines fo
 wintext_s = test_font.render("YOU WIN!", False, "Black")
 losetext_s = test_font.render("You Lose", False, "Black")
 
+
+
+starttext_s = test_font.render("Start", False, "Black")
+start_s = pygame.Surface((180, 50))
+start_s.fill("Red")
+start_r = start_s.get_rect(center = (display[0]/2, display[1]/2))
+
+
 black_s = pygame.Surface((meterDimensions[0]+10, meterDimensions[1]+10))
 black_s.fill("Black")
 black_r = black_s.get_rect(center = (xoffset, display[1]/2))
@@ -82,6 +90,8 @@ while(True):
             
         if event.type == pygame.MOUSEBUTTONDOWN:
             mouseButtonDown = True
+            if start_r.collidepoint(event.pos):
+                gameOver = False
             
         if event.type == pygame.MOUSEBUTTONUP:
             mouseButtonDown = False
@@ -132,7 +142,9 @@ while(True):
             catchFactor -= 3
         else:
             RuntimeError("LineDisplay is misplaced")
-
+    else:
+        screen.blit(start_s, start_r)
+        screen.blit(starttext_s, start_r)
     
     if catchFactor >= caughtThreshold:
         gameOver = True
@@ -144,18 +156,11 @@ while(True):
         screen.blit(losetext_s, (display[0]/2, display[1]/4))
         pygame.quit()
         exit()
-
         
 # ==========================================================================
 
     pygame.display.update()
     clock.tick(60)                                          # limit ticks to 60 (ie. Cap the framerate to 60fps)
-
-
-
-
-
-
 
 
 
